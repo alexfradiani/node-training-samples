@@ -1,0 +1,29 @@
+#left.outline-view
+  #DocumentTitles
+    ul#document-list
+      li#document-row-template(style='display: none')
+        a(id='document_{{ id }}') {{ title }}
+
+  ul.toolbar
+    li
+      a#create-document(href='/documents/new')
+        +
+    li
+      a#delete-document(href='#')
+        -
+
+.content-divider
+
+.content
+  #html-container(style='display: none')
+  #editor-container
+    div.title
+      input.title(name='d[title]')= d.title
+    textarea#editor(name='d[data]')
+
+ul#controls.toolbar
+  li
+    a#save-button(href='#') Save
+  li
+    a#html-button(href='#') HTML
+

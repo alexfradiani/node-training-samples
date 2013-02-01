@@ -1,0 +1,17 @@
+--- 
+applications: 
+  .: 
+    name: fradiani-test1webserv
+    instances: 1
+    infra: rs
+    framework: 
+      info: 
+        description: Node.js Application
+        mem: 64M
+        exec: 
+      name: node
+    mem: 64M
+    url: ${name}.${target-base}
+    services: 
+      mongodb-9868: 
+        type: mongodb
