@@ -1,0 +1,98 @@
+!!! 5
+html
+	head
+		title Fradiani Node.js + Facebook Example
+	body
+		h1 Logged with Facebook - using facebook-js Node.js library
+		h1 Hello #{viewData.username}!
+		img(src="#{viewData.user_pic}")
+
+		div(style="padding:20px; width:600px; background-color:rgb(218, 248, 210); margin:auto;")
+			p This page was made for testing with Node.js, using the facebook Graph API with the libraries facebook-js and fbgraph (from npm, 01/30/2013). Also, a simple mongodb database is used to save some user data
+			br
+			a(href="#friends") see friends list
+			br
+			a(href="#wall-post") post on wall
+			br
+			a(href="#search") search on fb pages
+			br
+			br
+			a(href="#mongo") MongoDB connectivity
+
+		#div-friends(style="background-color: rgb(231, 231, 231);")
+			a(name="friends")
+			p(style="font-weight:bold;") These are your friends:
+			div
+				-for(var i = 0; i < viewData.friends.length; i++) {
+					p(style="margin:3px; padding;3px; text-weight:bold;") #{viewData.friends[i].name}
+				-}
+
+		div(style="width:400px; height:200px; background-color:rgb(218, 248, 210); margin:auto; padding:20px; text-align:center:")
+			a(name="wall-post")
+			p 
+				b Post something on your wall from here!!!! post it!!!
+			textarea(id="post-txt", style="width:100%; height:100px;") add something here...
+			button(id="post-button") post it post it!!!
+			span(id="post-msg", style="color:red;")
+
+		br
+		div(style="width:800px; background-color:rgb(250, 238, 223); margin:auto; padding:20px; text-align:center:")
+			a(name="search")
+			p: b Search through fb Pages by Keywords:
+			input(id="search-inp", type="text", style="width:90%;")
+			button(id="search-button") Go Find!!!
+			#search-results(style="padding:15px;")
+
+		br
+		div(style="width:500px; background-color:rgb(250, 161, 161); margin:auto; padding:20px; text-align:center:")
+			a(name="mongo")
+			p: b Testing mongodb db collections:
+			div
+				Latest saved user: #{storedUser}
+
+script
+	document.getElementById("post-button").addEventListener("click", sendPost);
+	document.getElementById("search-button").addEventListener("click", searchPages);
+
+
+	function sendPost() {
+		document.getElementById("post-msg").innerHTML = '<b>Hold on... I\'m sending it</b>';
+
+		var xhr = new XMLHttpRequest();
+		xhr.open("POST", "/postStatus", true);
+		xhr.setRequestHeader("Content-type", "application/json");
+		
+		xhr.onreadystatechange = function() {
+			if(xhr.readyState == 4) {
+				document.getElementById("post-msg").innerHTML = '';
+				document.getElementById("post-txt").value = '';
+				alert("Done!");
+			}
+		};
+
+		var data = {str: document.getElementById("post-txt").value};
+		xhr.send(JSON.stringify(data));
+	}
+
+	function searchPages() {
+		document.getElementById("search-results").innerHTML = 'Looking for pages with that string...';
+		var inp = document.getElementById("search-inp").value;
+
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", "/searchPages?str=" + inp, true);
+		
+		xhr.onreadystatechange = function() {
+			if(xhr.readyState == 4) {
+				var html = '';
+				var results = JSON.parse(xhr.responseText); 
+				for (var i = 0; i < results.length; i++) {
+					html += '<p><b>' + results[i].name + '  -  ' + results[i].category + '</b></p>';
+				}
+
+				document.getElementById("search-results").innerHTML = html;
+			}
+		};
+
+		//var data = {str: document.getElementById("post-txt").value};
+		xhr.send();
+	}

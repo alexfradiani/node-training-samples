@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+   <title>nodejs - facebook</title>
+</head>
+<body>
+	<div>
+           <button id="login">Login</button>
+           <button id="logout">Logout</button>
+	</div>
+    <br>
+    <span id="user-info" style="border:1px solid #888"></span>
+    <span id="fb-root"></span>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
+    <script>
+        // initialize the library with the API key
+        FB.init({ appId:'416233508452639' });
+
+        // fetch the status on load
+        FB.getLoginStatus(handleSessionResponse);
+
+        $('#login').bind('click', function() {
+            FB.login(handleSessionResponse);
+        });
+
+        $('#logout').bind('click', function() {
+            FB.logout(handleSessionResponse);
+        });
+
+        // handle a session response from any of the auth related calls
+        function handleSessionResponse() {
+            FB.api('/me', function(response) {
+                console.log(response);
+                $('#user-info').html(response.id + ' - ' + response.name);
+            });
+        }
+    </script>
+</body>
+</html>
